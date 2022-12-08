@@ -38,3 +38,5 @@ function inspectSections2(section) {
     if (secondElfLeft < firstElfLeft && secondElfLeft > firstElfRight) return 1
     return 0
 }
+
+console.log(sections2())

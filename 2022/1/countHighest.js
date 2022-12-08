@@ -1,4 +1,7 @@
-function countHighest(arr) { 
+import { syncReadFile } from '../utils/syncReadFile.js'
+
+function countHighest() { 
+    let arr = syncReadFile('./elves.txt')
     max = 0; 
     inner = 0; 
     for (let i = 0; i < arr.length; i++) {
@@ -11,3 +14,5 @@ function countHighest(arr) {
     } 
     return max
 }
+
+console.log(countHighest())

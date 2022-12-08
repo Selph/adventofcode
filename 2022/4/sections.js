@@ -1,14 +1,4 @@
-const {readFileSync, promises: fsPromises} = require('fs');
-
-function syncReadFile(filename) {
-    const contents = readFileSync(filename, 'utf-8');
-
-    const arr = contents.split(/\r?\n/);
-
-    console.log(arr); // 👉️ ['One', 'Two', 'Three', 'Four']
-
-    return arr;
-}
+import { syncReadFile } from '../utils/syncReadFile.js'
 
 function sections() {
     let sectionList = syncReadFile('./input.txt')
@@ -29,3 +19,5 @@ function inspectSections(section) {
         parseInt(secondElf[0]) <= parseInt(firstElf[0]) && parseInt(secondElf[1]) >= parseInt(firstElf[1])) return 1
     return 0
 }
+
+console.log(sections())

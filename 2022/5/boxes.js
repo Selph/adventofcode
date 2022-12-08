@@ -1,10 +1,4 @@
-const {readFileSync, promises: fsPromises} = require('fs');
-
-function syncReadFile(filename) {
-    const contents = readFileSync(filename, 'utf-8');
-    const arr = contents.split(/\r?\n/);
-    return arr;
-}
+import { syncReadFile } from '../utils/syncReadFile.js'
 
 function stacking(func = 1) {
     let boxes = prepareBoxes()
@@ -18,15 +12,15 @@ function prepareBoxes() {
     let boxes = []; let y;
 
     // Arranges box data into an array of stacks
-    for (s of rawStacks) {
+    for (let s of rawStacks) {
         (!isNaN(Number(s))) ? (y = Number(s), boxes[y] = []) : boxes[y].push(s);
     }
     return boxes
 }
 
 function prepareOperations() {
-    operations = syncReadFile('./input.txt')
-    newOps = [];
+    let operationsRaw = syncReadFile('./input.txt')
+    let newOps = [];
 
     // Arranges operation data into an array of defined operations
     operationsRaw.forEach((operation) => {
@@ -59,3 +53,5 @@ function topOfEach(boxes) {
     boxes.forEach((box) => tops += box.slice(-1))
     return tops;
 }
+
+console.log(process.argv.length > 2 ? stacking(process.argv[2]) : stacking())

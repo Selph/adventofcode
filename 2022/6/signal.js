@@ -1,10 +1,4 @@
-const {readFileSync, promises: fsPromises} = require('fs');
-
-function syncReadFile(filename) {
-    const contents = readFileSync(filename, 'utf-8');
-    const arr = contents.split(/\r?\n/);
-    return arr;
-}
+import { syncReadFile } from '../utils/syncReadFile.js'
 
 function signal(distinct = 4) {
     let signal = syncReadFile('./input.txt')
@@ -26,3 +20,5 @@ function processSignal(signal, distinct) {
         return i
     }
 }
+
+console.log(process.argv.length > 2 ? signal(process.argv[2]) : signal())

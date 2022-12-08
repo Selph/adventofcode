@@ -1,4 +1,7 @@
-function rockpaperscissor(game) {
+import { syncReadFile } from '../utils/syncReadFile.js'
+
+function rockpaperscissor2() {
+    let game = syncReadFile('./rps.txt')
     // Normalize inputs
     normalGame = normalizeGame2(game);
 
@@ -47,3 +50,5 @@ function getResult2(game) {
     // Lose
     if (game.strat === 'lose') return 0 + choicePoints[game.opponent.wins];
 }
+
+console.log(rockpaperscissor2())

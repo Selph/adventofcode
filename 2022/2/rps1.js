@@ -1,4 +1,7 @@
-function rockpaperscissor(game) {
+import { syncReadFile } from '../utils/syncReadFile.js'
+
+function rockpaperscissor() {
+    let game = syncReadFile('./rps.txt')
     // Give meaning to inputs
     let round = createRound(game[0], game[2]);
 
@@ -49,3 +52,5 @@ function resultPoints(round) {
     // Lose
     if (round.opponent.choice === round.player.loses)  return points.Lose;
 }
+
+console.log(rockpaperscissor())

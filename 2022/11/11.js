@@ -10,63 +10,68 @@ class Monkey {
         this.inspection = 0
     }
 
-    operate(int, modBy) {
+    inspect(mod) {
         let throwingList = []
         for (let item of this.items) {
-            let divided = false
+            // Inspect
+            this.inspection++
+
+            // Increase worry level
             if (this.operation.operator === '+') { item += this.operation.value; }
             if (this.operation.operator === '*') { item *= isNaN(this.operation.value) ? item : this.operation.value; }
-            item = (int === 1) ? Math.floor(item / 3) : item % modBy
-            if (item % this.test === 0) divided = true 
-            throwingList.push({item: item, monkey: divided ? this.ifTrue : this.ifFalse })
-            this.inspection++
+
+            // Relief: 
+            //  Case 1 => Divide by 3
+            //  Case 2 => Problem: Number gets too big
+            //            Solution: Cycle through lowest common denominator of all dividers by using modulus
+            //            Example: Monkey1's divider is 3 and Monkey2's divider is 5. lcd is 3*5=15. if number goes higher than 15, number = number % 15
+            item = (mod) ? item % mod : ~~(item / 3)
+
+            // Throw item
+            throwingList.push({item: item, monkey: (item % this.test === 0) ? this.ifTrue : this.ifFalse })
         }
         this.items = []
         return throwingList
     }
 
-    throwItem(item) { 
+    catchItem(item) { 
         this.items.push(item)
     }
 }
 
-function throwItems(list, monkeys) {
-    for (let item of list) {
-        monkeys[item.monkey].throwItem(item.item)
-    }
-}
-
 function monkeysInTheMiddle() {
-    let monkeys = syncReadFile('./11.in').map((line) => line.split(' ').filter(word => word !== '')).filter(line => line.length !== 0)
-    let monkeys2 = [...monkeys]
-    monkeys = createMonkeys(monkeys)
-    monkeys2 = createMonkeys(monkeys2)
-    for (let i = 0; i < 20; i++) {
-        for (let monkey of monkeys) {
-            throwItems(monkey.operate(1), monkeys)
-        }
-    }
+    // Parse input into array: Split by word, remove empty string and empty lines
+    let parsedInput = syncReadFile('./11.in').map((line) => line.split(' ').filter(word => word !== '')).filter(line => line.length !== 0)
 
-    // Multiply test numbers together
-    let modBy = monkeys2.reduce((acc,curr) => acc * curr.test, 1)
-    for (let i = 0; i < 10000; i++) {
-        for (let monkey of monkeys2) {
-            throwItems(monkey.operate(2, modBy), monkeys2)
-        }
-    }
-    
-    for (let list of [monkeys, monkeys2]) {
-        let inspections = list.map((item) => { return item.inspection }).sort(function (a, b) {  return a - b;  }).reverse()
-        console.log(inspections[0] * inspections[1])
-    }
+    // Monkey class. Doesn't work to clone the monkey array so it's initialized twice instead
+    let monkeys1 = createMonkeys(parsedInput)
+    let monkeys2 = createMonkeys(parsedInput)
+
+    // Lowest Common Demoninator, used to cycle numbers in part two so they don't grow beyond computational limits
+    let mod = monkeys1.reduce((acc,curr) => acc * curr.test, 1)
+
+    // Do rounds of inspection
+    for (let i = 0; i < 20;    i++) { monkeys1.forEach(monkey => throwItems(monkey.inspect(   ), monkeys1)) } 
+    for (let i = 0; i < 10000; i++) { monkeys2.forEach(monkey => throwItems(monkey.inspect(mod), monkeys2)) } 
+
+    // Find the inspection values, sort them, return product of highest 2
+    [monkeys1, monkeys2]
+        .forEach(list => console.log(list
+        .map((item) => { return item.inspection })
+        .sort(function (a, b) {  return a - b;  })
+        .splice(-2).reduce((a,c) => a*c,1)))
 }
 
-function createMonkeys(monkeysRaw) {
+function createMonkeys(mRaw) {
     let monkeys = []
-    for (let i = 0; i < monkeysRaw.length/6; i++) {
-        monkeys.push(new Monkey(monkeysRaw[i*6+0], monkeysRaw[i*6+1], monkeysRaw[i*6+2], monkeysRaw[i*6+3], monkeysRaw[i*6+4], monkeysRaw[i*6+5],))
-    }
+    for (let i = 0; i < mRaw.length/6; i++) { monkeys.push(new Monkey(mRaw[i*6+0], mRaw[i*6+1],mRaw[i*6+2], mRaw[i*6+3], mRaw[i*6+4], mRaw[i*6+5])) }
     return monkeys
+}
+
+function throwItems(list, monkeys) {
+    for (let { monkey, item } of list) {
+        monkeys[monkey].catchItem(item)
+    }
 }
 
 console.time('Execution Time'); 

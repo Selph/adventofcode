@@ -22,7 +22,7 @@ function cathodeRayTube() {
 
 function tick() {
     // draw before ticking since arrays start at 0
-    render[~~(t/40)][t%40] = (Math.abs(x-(t%40)) <= 1) ? '#' : ' '
+    render[~~(t/40)][t%40] = (Math.abs(x-(t%40)) <= 1) ? '██' : '  '
     t++
     if ([20, 60, 100, 140, 180, 220].includes(t)) signal += t * x 
 }
